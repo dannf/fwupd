@@ -15,7 +15,6 @@ struct _FuFrescoPdDevice
 {
 	FuUsbDevice		 parent_instance;
 	guint8			 project_id;
-	guint32			 quirked_addr_fixme;
 };
 
 G_DEFINE_TYPE (FuFrescoPdDevice, fu_fresco_pd_device, FU_TYPE_USB_DEVICE)
@@ -24,7 +23,7 @@ static void
 fu_fresco_pd_device_to_string (FuDevice *device, guint idt, GString *str)
 {
 	FuFrescoPdDevice *self = FU_FRESCO_PD_DEVICE (device);
-	fu_common_string_append_ku (str, idt, "QuirkedAddrFixme", self->quirked_addr_fixme);
+	fu_common_string_append_ku (str, idt, "ProjectID", self->project_id);
 }
 
 static gboolean
@@ -406,24 +405,6 @@ fu_fresco_pd_device_write_firmware (FuDevice *device,
 	return fu_fresco_pd_device_panther_reset_device(self, error);
 }
 
-static gboolean
-fu_fresco_pd_device_set_quirk_kv (FuDevice *device,
-					const gchar *key,
-					const gchar *value,
-					GError **error)
-{
-	FuFrescoPdDevice *self = FU_FRESCO_PD_DEVICE (device);
-	if (g_strcmp0 (key, "QuirkedAddrFixme") == 0) {
-		self->quirked_addr_fixme = fu_common_strtoull (value);
-		return TRUE;
-	}
-	g_set_error_literal (error,
-			     FWUPD_ERROR,
-			     FWUPD_ERROR_NOT_SUPPORTED,
-			     "quirk key not supported");
-	return FALSE;
-}
-
 static void
 fu_fresco_pd_device_init (FuFrescoPdDevice *self)
 {
@@ -441,7 +422,6 @@ fu_fresco_pd_device_class_init (FuFrescoPdDeviceClass *klass)
 	FuDeviceClass *klass_device = FU_DEVICE_CLASS (klass);
 	FuUsbDeviceClass *klass_usb_device = FU_USB_DEVICE_CLASS (klass);
 	klass_device->to_string = fu_fresco_pd_device_to_string;
-	klass_device->set_quirk_kv = fu_fresco_pd_device_set_quirk_kv;
 	klass_device->setup = fu_fresco_pd_device_setup;
 	klass_device->write_firmware = fu_fresco_pd_device_write_firmware;
 	klass_device->prepare_firmware = fu_fresco_pd_device_prepare_firmware;

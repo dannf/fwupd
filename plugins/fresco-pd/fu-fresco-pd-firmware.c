@@ -23,6 +23,14 @@ fu_fresco_pd_firmware_get_project_id (FuFrescoPdFirmware *self)
 	return self->project_id;
 }
 
+static void
+fu_fresco_pd_firmware_to_string (FuFirmware *firmware, guint idt, GString *str)
+{
+	FuFrescoPdFirmware *self = FU_FRESCO_PD_FIRMWARE (firmware);
+	fu_common_string_append_ku (str, idt, "ProjectID", self->project_id);
+}
+
+
 static gboolean
 fu_fresco_pd_firmware_parse (FuFirmware *firmware,
 			     GBytes *fw,
@@ -64,6 +72,7 @@ fu_fresco_pd_firmware_class_init (FuFrescoPdFirmwareClass *klass)
 {
 	FuFirmwareClass *klass_firmware = FU_FIRMWARE_CLASS (klass);
 	klass_firmware->parse = fu_fresco_pd_firmware_parse;
+	klass_firmware->to_string = fu_fresco_pd_firmware_to_string;
 }
 
 FuFirmware *

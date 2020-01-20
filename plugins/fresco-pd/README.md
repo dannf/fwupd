@@ -33,12 +33,3 @@ Vendor ID Security
 ------------------
 
 The vendor ID is set from the USB vendor, in this instance set to `USB:0x1D5C`
-
-Quirk Use
----------
-
-This plugin uses the following plugin-specific quirks:
-
-| Quirk                      | Description                      | Minimum fwupd version |
-|----------------------------|----------------------------------|-----------------------|
-| `QuirkedAddrFixme`         | FIXME: What do we want to quirk? | 1.3.6                 |
