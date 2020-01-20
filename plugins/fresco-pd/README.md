@@ -27,7 +27,7 @@ These devices use the standard USB DeviceInstanceId values, e.g.
 
 These devices also use custom GUID values, e.g.
 
- * `USB\VID_1D5C&PID_7102&CID_0001`
+ * `USB\VID_1D5C&PID_7102&CID_01`
 
 Vendor ID Security
 ------------------

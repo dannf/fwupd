@@ -14,7 +14,7 @@
 struct _FuFrescoPdDevice
 {
 	FuUsbDevice		 parent_instance;
-	guint8			 project_id;
+	guint8			 customer_id;
 };
 
 G_DEFINE_TYPE (FuFrescoPdDevice, fu_fresco_pd_device, FU_TYPE_USB_DEVICE)
@@ -23,7 +23,7 @@ static void
 fu_fresco_pd_device_to_string (FuDevice *device, guint idt, GString *str)
 {
 	FuFrescoPdDevice *self = FU_FRESCO_PD_DEVICE (device);
-	fu_common_string_append_ku (str, idt, "ProjectID", self->project_id);
+	fu_common_string_append_ku (str, idt, "CustomerID", self->customer_id);
 }
 
 static gboolean
@@ -181,7 +181,6 @@ fu_fresco_pd_device_setup (FuDevice *device, GError **error)
 {
 	FuFrescoPdDevice *self = FU_FRESCO_PD_DEVICE (device);
 	FuUsbDevice *usb_device = FU_USB_DEVICE (device);
-	guint16 customer_id = 0xDEAD;
 	guint8 ver[4] = { 0x0 };
 	g_autofree gchar *instance_id = NULL;
 	g_autofree gchar *version = NULL;
@@ -191,18 +190,16 @@ fu_fresco_pd_device_setup (FuDevice *device, GError **error)
 		if (!fu_fresco_pd_device_transfer_read (self, 0x3000 + i, &ver[i], 1, error))
 			return FALSE;
 	}
-	self->project_id = ver[1];
 	version = fu_fresco_pd_version_from_buf (ver);
 	fu_device_set_version (FU_DEVICE (self), version, FWUPD_VERSION_FORMAT_QUAD);
 
 	/* get customer ID */
-	//FIXME add code to read register?
-	instance_id = g_strdup_printf ("USB\\VID_%04X&PID_%04X&CID_%04X",
+	self->customer_id = ver[1];
+	instance_id = g_strdup_printf ("USB\\VID_%04X&PID_%04X&CID_%02X",
 				       fu_usb_device_get_vid (usb_device),
 				       fu_usb_device_get_pid (usb_device),
-				       customer_id);
+				       self->customer_id);
 	fu_device_add_instance_id (device, instance_id);
-
 
 	/* success */
 	return TRUE;
@@ -232,7 +229,7 @@ fu_fresco_pd_device_prepare_firmware (FuDevice *device,
 				      GError **error)
 {
 	FuFrescoPdDevice *self = FU_FRESCO_PD_DEVICE (device);
-	guint8 project_id;
+	guint8 customer_id;
 	g_autoptr(FuFirmware) firmware = fu_fresco_pd_firmware_new ();
 
 	/* check size */
@@ -250,13 +247,13 @@ fu_fresco_pd_device_prepare_firmware (FuDevice *device,
 	fu_device_set_status (device, FWUPD_STATUS_DECOMPRESSING);
 	if (!fu_firmware_parse (firmware, fw, flags, error))
 		return NULL;
-	project_id = fu_fresco_pd_firmware_get_project_id (FU_FRESCO_PD_FIRMWARE (firmware));
-	if (project_id != self->project_id) {
+	customer_id = fu_fresco_pd_firmware_get_project_id (FU_FRESCO_PD_FIRMWARE (firmware));
+	if (customer_id != self->customer_id) {
 		g_set_error (error,
 			     FWUPD_ERROR,
 			     FWUPD_ERROR_INVALID_FILE,
 			     "device is incompatible with firmware x.%u.x.x",
-			     project_id);
+			     customer_id);
 		return NULL;
 	}
 	return g_steal_pointer (&firmware);
