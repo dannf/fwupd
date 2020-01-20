@@ -13,4 +13,4 @@
 G_DECLARE_FINAL_TYPE (FuFrescoPdFirmware, fu_fresco_pd_firmware, FU, FRESCO_PD_FIRMWARE, FuFirmware)
 
 FuFirmware		*fu_fresco_pd_firmware_new			(void);
-guint8			 fu_fresco_pd_firmware_get_project_id		(FuFrescoPdFirmware	*self);
+guint8			 fu_fresco_pd_firmware_get_customer_id		(FuFrescoPdFirmware	*self);

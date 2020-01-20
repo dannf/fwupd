@@ -247,7 +247,7 @@ fu_fresco_pd_device_prepare_firmware (FuDevice *device,
 	fu_device_set_status (device, FWUPD_STATUS_DECOMPRESSING);
 	if (!fu_firmware_parse (firmware, fw, flags, error))
 		return NULL;
-	customer_id = fu_fresco_pd_firmware_get_project_id (FU_FRESCO_PD_FIRMWARE (firmware));
+	customer_id = fu_fresco_pd_firmware_get_customer_id (FU_FRESCO_PD_FIRMWARE (firmware));
 	if (customer_id != self->customer_id) {
 		g_set_error (error,
 			     FWUPD_ERROR,

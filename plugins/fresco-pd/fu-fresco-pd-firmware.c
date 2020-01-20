@@ -18,7 +18,7 @@ struct _FuFrescoPdFirmware {
 G_DEFINE_TYPE (FuFrescoPdFirmware, fu_fresco_pd_firmware, FU_TYPE_FIRMWARE)
 
 guint8
-fu_fresco_pd_firmware_get_project_id (FuFrescoPdFirmware *self)
+fu_fresco_pd_firmware_get_customer_id (FuFrescoPdFirmware *self)
 {
 	return self->customer_id;
 }
@@ -51,7 +51,7 @@ fu_fresco_pd_firmware_parse (FuFirmware *firmware,
 			     sizeof(ver), error))
 		return FALSE;
 
-	/* project ID is always the 2nd byte */
+	/* customer ID is always the 2nd byte */
 	self->customer_id = ver[1];
 
 	/* set version number */
